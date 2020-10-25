@@ -1,5 +1,6 @@
 const formularioContactos = document.querySelector('#contacto'),
-    listadoContactos = document.querySelector('.listado-contactos tbody');
+    listadoContactos = document.querySelector('.listado-contactos tbody'),
+    inputBuscador = document.querySelector('#buscar');
 
 eventListeners();
 
@@ -11,6 +12,8 @@ function eventListeners() {
     //Listener para eliminar el boton
     if (listadoContactos)
         listadoContactos.addEventListener('click', eliminarContacto);
+
+    inputBuscador.addEventListener('keyup', buscarContactos);
 
     function leerFormulario(e) {
         e.preventDefault();
@@ -39,6 +42,9 @@ function eventListeners() {
                 insertarDB(infoContacto);
             } else {
                 //Editar contacto
+                const idRegistro = document.querySelector('#id').value;
+                infoContacto.append('id', idRegistro);
+                actualizarRegistro(infoContacto);
             }
         }
     }
@@ -108,12 +114,45 @@ function insertarDB(datos) {
             document.querySelector('form').reset();
 
             //Mostrar notificacion
-            monstrarNotificacion('Contacto creado correctamente', 'correcto')
+            monstrarNotificacion('Contacto creado correctamente', 'correcto');
+            numeroContactos();
         }
     }
 
     //Enviar datos
     xhr.send(datos);
+}
+
+function actualizarRegistro(datos) {
+    //Crear el objeto
+    const xhr = new XMLHttpRequest();
+
+    //Abrir conexion
+    xhr.open('POST', 'includes/modelos/modelo-contactos.php', true);
+
+    //Leer respuesta
+    xhr.onload = function() {
+        if (xhr.status == 200) {
+            const respuesta = JSON.parse(xhr.responseText);
+
+            if (respuesta.respuesta === 'correcto') {
+                //Motrar notificacion de correcto
+                monstrarNotificacion('Contacto editdo correctamente', 'correcto');
+            } else {
+                //Motrar notificacion de error
+                monstrarNotificacion('Hubo un error...', 'error');
+            }
+
+            //Despues de 3 segundos redireccionar
+            setTimeout(() => {
+                window.location.href = 'index.php';
+            }, 4000);
+        }
+    }
+
+    //Enviar peticion
+    xhr.send(datos);
+
 }
 
 //Eliminar Contacto
@@ -143,11 +182,11 @@ function eliminarContacto(e) {
 
                         //Mostrar notificacion
                         monstrarNotificacion('Contacto eliminado', 'correcto');
+                        numeroContactos();
                     } else {
                         //Mostramos una notificacion
                         monstrarNotificacion('Hubo un error...', 'error');
                     }
-
                 }
             }
 
@@ -160,7 +199,6 @@ function eliminarContacto(e) {
 }
 
 //Notificación en pantalla
-
 function monstrarNotificacion(mensaje, clase) {
     const notificacion = document.createElement('div');
     notificacion.classList.add(clase, 'notificacion', 'sombra');
@@ -180,4 +218,36 @@ function monstrarNotificacion(mensaje, clase) {
             }, 500);
         }, 3000)
     }, 100)
+}
+
+//Buscador de regitros
+function buscarContactos(e) {
+    //console.log(e.target.value);
+
+    const expression = new RegExp(e.target.value, "i"), //i, is for case inensitive
+        registros = document.querySelectorAll('tbody tr');
+
+    registros.forEach(registro => {
+        registro.style.display = 'none';
+
+        if (registro.childNodes[1].textContent.replace(/\s/g, " ").search(expression) != -1) {
+            registro.style.display = 'table-row';
+        }
+
+        numeroContactos();
+    })
+}
+
+//Muetra el numero de contctos en el grid
+function numeroContactos() {
+    const totalContactos = document.querySelectorAll('tbody tr'),
+        contenedorNumero = document.querySelector('.total-contactos span');
+
+    let total = 0;
+    totalContactos.forEach(contacto => {
+        if (contacto.style.display === '' || contacto.style.display === 'table-row')
+            total++;
+    });
+
+    contenedorNumero.textContent = total + " ";
 }

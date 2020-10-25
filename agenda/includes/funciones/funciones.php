@@ -14,7 +14,7 @@ function obtenerContactos() {
 function obtenerContacto($id) {
     include 'db.php';
     try {
-        return $conn->query("SELECT Id, Nombre, Empresa, Telefono FROM Contactos WHERE Id = 25");
+        return $conn->query("SELECT Id, Nombre, Empresa, Telefono FROM Contactos WHERE Id = $id");
     } catch (Exception $e){
         echo "Error!!!" . $e->getMessage() . "<br>";
         return false;

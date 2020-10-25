@@ -7,10 +7,15 @@
         die('No es valido');
     }
 
+    var_dump($id);
+
+
     $resultado = obtenerContacto($id);
     $contacto = $resultado->fetch_assoc();
  ?>
-
+<pre>
+    <?php echo var_dump($contacto) ?>
+</pre>
 <div class="contenedor-barra">
     <div class="contenedor barra">
         <a href="index.php" class="btn volver">Volver</a>

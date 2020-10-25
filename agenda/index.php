@@ -18,7 +18,7 @@ include 'includes/layout/header.php';
 <div class="bg-blanco contenedor sombra contactos">
     <div class="contenedor-contactos">
         <h2>Contactos</h2>
-        <input type="text id="buscar" class="buscador sombra" placeholder="Bucar Contactos...">
+        <input type="text" id="buscar" class="buscador sombra" placeholder="Bucar Contactos...">
         <p class="total-contactos"> <span>2 </span>Contactos</p>
         <div class="contenedor-tabla">
             <table class="listado-contactos">
